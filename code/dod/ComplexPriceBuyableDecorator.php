@@ -38,6 +38,7 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 	}
 
 	function updateCalculatedPrice(&$startingPrice) {
+		$newPrice = null;
 		$fieldName = $this->owner->ClassName."ID";
 		$singleton = DataObject::get_one("ComplexPriceObject");
 		if($singleton) {
@@ -52,7 +53,6 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 			}
 			$prices = DataObject::get("ComplexPriceObject", "\"$fieldName\" = '".$this->owner->ID."' AND \"NoLongerValid\" = 0", "\"Price\" DESC");
 			$memberGroupsArray = array();
-			$newPrice = null;
 			if($prices) {
 				if($member = Member::currentMember()) {
 					if($memberGroupComponents = $member->getManyManyComponents('Groups')) {
