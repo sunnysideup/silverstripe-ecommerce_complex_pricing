@@ -111,7 +111,7 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 						}
 					}
 					if($priceCanBeUsed) {
-						$newPrice = $price->Price;
+						$newPrice = $price->getCalculatedPrice();
 					}
 				}
 			}

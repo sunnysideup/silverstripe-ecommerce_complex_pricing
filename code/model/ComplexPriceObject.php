@@ -4,7 +4,9 @@
 class ComplexPriceObject extends DataObject {
 
 	public static $db = array(
-		'Price' => 'Currency',
+		'NewPrice' => 'Currency',
+		'Percentage' => 'Double',
+		'Reduction' => 'Currency',
 		'From' => 'SS_Datetime',
 		'Until' => 'SS_Datetime',
 		'NoLongerValid' => 'Boolean'
@@ -31,13 +33,15 @@ class ComplexPriceObject extends DataObject {
 		'Price' => 'Price',
 		'From' => 'Valid From',
 		'Until' => 'Valid Until',
+		'CalculatedPrice' => 'New Price',
 		'NoLongerValidNice' => 'Valid'
 	);
 
 	public static $casting = array(
 		'NoLongerValidNice' => 'Varchar',
 		'Buyable' => 'DataOject',
-		'Name' => 'Varchar'
+		'Name' => 'Varchar',
+		'CalculatedPrice' => 'Currency'
 	);
 
 	public static $singular_name = "Price";
@@ -79,6 +83,28 @@ class ComplexPriceObject extends DataObject {
 		}
 	}
 
+	function CalculatedPrice() {return $this->getCalculatedPrice();}
+	function getCalculatedPrice() {
+		$buyable = $this->getBuyable();
+		if($this->NewPrice && $this->NewPrice > 0) {
+			$newPrice = $this->NewPrice;
+		}
+		else {
+			$newPrice = $buyable->Price;
+			if($this->Percentage) {
+				$newPrice  = $newPrice - ($newPrice * ($this->Percentage / 100));
+			}
+			if($this->Reduction) {
+				$newPrice = $newPrice - $this->Reduction;
+			}
+			return $newPrice;
+		}
+		if($newPrice < 0) {
+			return 0;
+		}
+		return $newPrice;
+	}
+
 	function NoLongerValidNice() {return $this->getNoLongerValidNice();}
 	function getNoLongerValidNice() {
 		$nowTS = strtotime("now");
@@ -96,6 +122,28 @@ class ComplexPriceObject extends DataObject {
 		}
 	}
 
+	public function validate() {
+		$errors = array();
+		if(strtotime($this->From) < strtotime("1 jan 2000")) {
+			$errors[] = "The FROM field needs to be after 1 Jan 2000";
+		}
+		if(strtotime($this->Until) < strtotime("1 jan 2000")) {
+			$errors[] = "The UNTIL field needs to be after 1 Jan 2000";
+		}
+		if(strtotime($this->Until) < strtotime($this->From)) {
+			$errors[] = "The UNTIL field needs to be after the UNTIL field";
+		}
+		if($this->Percentage < 0 || $this->Percentage > 100) {
+			$errors[] = "The PERCENTAGE field needs to be between 0 and 100";
+		}
+		if(count($errors)== 0) {
+			return new ValidationResult();
+		}
+		else {
+			return new ValidationResult(false, "Please check: ".implode("; ", $errors).".");
+		}
+	}
+
 	function Name() {return $this->getName();}
 	function getName() {
 		if($buyable = $this->getBuyable()) {
@@ -104,15 +152,8 @@ class ComplexPriceObject extends DataObject {
 		return "no name";
 	}
 
-	static function work_out_price($buyable, $member = null, $dateTimeStamp = null ) {
-		if(!$member) {
-			$member = Member::currentMember();
-		}
-		if(!$dateTimeStamp) {
-			$dateTimeStamp = Date();
-		}
-		DataObject::get("ComplexPriceObject", "\"BuyableID\" = ".$buyable->ID." AND \"BuyableClassName\" = '".$buyable->ClassName."'");
+	function onBeforeWrite() {
+		parent::onBeforeWrite();
 	}
-
 
 }
