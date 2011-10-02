@@ -12,20 +12,23 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 	}
 
 	function updateCMSFields(&$fields) {
-		$fields->addFieldToTab(
-			"Root.Content.Prices",
-			$this->complexPricesHasManyTable()
+		$fields->addFieldsToTab(
+			"Root.Content.Pricing",
+			array(
+				$this->complexPricesHasManyTable(),
+				new LiteralField("ComplexPricesExplanation", "<p>Please enter <i>alternative</i> pricing below. You can enter a price per <a href=\"admin/security/\">security group</a> and or country.</p>"),
+			)
 		);
 	}
 
 	protected function complexPricesHasManyTable(){
-		$field = new HasManyComplexTableField(
+		$complexTableField = new HasManyComplexTableField(
 			$controller = $this->owner,
 			$name = "ComplexPriceObjects",
 			$sourceClass = "ComplexPriceObject"
 		);
-		$field->setRelationAutoSetting(true);
-		return $field;
+		$complexTableField->setRelationAutoSetting(true);
+		return $complexTableField;
 	}
 
 	function HasDiscount() {
