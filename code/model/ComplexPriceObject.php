@@ -33,6 +33,7 @@ class ComplexPriceObject extends DataObject {
 		'Price' => 'Price',
 		'From' => 'Valid From',
 		'Until' => 'Valid Until',
+		'AppliesTo' => 'Applies To',
 		'CalculatedPrice' => 'New Price',
 		'NoLongerValidNice' => 'Valid'
 	);
@@ -41,7 +42,8 @@ class ComplexPriceObject extends DataObject {
 		'NoLongerValidNice' => 'Varchar',
 		'Buyable' => 'DataOject',
 		'Name' => 'Varchar',
-		'CalculatedPrice' => 'Currency'
+		'CalculatedPrice' => 'Currency',
+		'AppliesTo' => 'Text'
 	);
 
 	public static $singular_name = "Price";
@@ -55,7 +57,7 @@ class ComplexPriceObject extends DataObject {
 		$fields = parent::getCMSFields();
 		$fields->replaceField("From", new TextField("From"));
 		$fields->replaceField("Until", new TextField("Until"));
-		$fields->replaceField("Percentage", new NumericField("Percentage", "Percentage discount from 0 (0% discount) to 100( 100% discount)"));
+		$fields->replaceField("Percentage", new NumericField("Percentage", "Percentage discount from 0 (0% discount) to 100 (100% discount)"));
 		if($groups = DataObject::get("Group")) {
 			$fields->replaceField("Groups", new CheckboxSetField("Groups", "Who", $groups->toDropdownMap()));
 		}
@@ -101,9 +103,28 @@ class ComplexPriceObject extends DataObject {
 			return $newPrice;
 		}
 		if($newPrice < 0) {
-			return 0;
+			$newPrice = 0;
 		}
 		return $newPrice;
+	}
+
+	function AppliesTo() {return $this->getAppliesTo();}
+	function getAppliesTo() {
+		$appliesTo = array(); //;
+		if($this->Groups()) {
+			foreach($this->Groups() as $group) {
+				$appliesTo[] = $group->getTitle();
+			}
+		}
+		if($this->EcommerceCountries()) {
+			foreach($this->EcommerceCountries() as $ecommerceCountries) {
+				$appliesTo[] = $ecommerceCountries->getTitle();
+			}
+		}
+		if(!count($appliesTo)) {
+			$appliesTo[] = "Everyone";
+		}
+		return implode(", ", $appliesTo) . ".";
 	}
 
 	function NoLongerValidNice() {return $this->getNoLongerValidNice();}
@@ -114,7 +135,7 @@ class ComplexPriceObject extends DataObject {
 			if($untilTS < $nowTS) {
 				$this->NoLongerValid;
 				$this->write();
-				return "expired $nowTS, $untilTS";
+				return "expired";
 			}
 			return "no longer valid";
 		}
