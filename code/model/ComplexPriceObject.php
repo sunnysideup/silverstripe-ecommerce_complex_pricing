@@ -55,6 +55,7 @@ class ComplexPriceObject extends DataObject {
 		$fields = parent::getCMSFields();
 		$fields->replaceField("From", new TextField("From"));
 		$fields->replaceField("Until", new TextField("Until"));
+		$fields->replaceField("Percentage", new NumericField("Percentage", "Percentage discount from 0 (0% discount) to 100( 100% discount)"));
 		if($groups = DataObject::get("Group")) {
 			$fields->replaceField("Groups", new CheckboxSetField("Groups", "Who", $groups->toDropdownMap()));
 		}
