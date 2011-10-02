@@ -51,7 +51,7 @@ class ComplexPriceObject extends DataObject {
 	public static $plural_name = "Prices";
 
 	//defaults
-	public static $default_sort = "\"NoLongerValid\" ASC, \"LastEdited\" DESC ";
+	public static $default_sort = "\"NoLongerValid\" ASC, \"Until\" DESC, \"From\" DESC ";
 
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
