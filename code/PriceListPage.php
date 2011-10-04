@@ -19,8 +19,8 @@ class PriceListPage extends ProductGroup {
 	public static $icon = "ecommerce_complex_pricing/images/treeicons/PriceListPage";
 
 	protected $toHideArray = array(
-		"LevelOfProductsToShow" => "Int",
-		"ProductsAlsoInOthersGroups" => "Boolean"
+		"LevelOfProductsToShow",
+		"ProductsAlsoInOthersGroups"
 	);
 
 
