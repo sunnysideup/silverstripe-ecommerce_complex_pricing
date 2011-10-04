@@ -20,8 +20,8 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 			)
 		);
 		if(class_exists("DataObjectOneFieldUpdateController")) {
-			$link = DataObjectOneFieldUpdateController::popup_link($this->owner->ClassName, "Price", $where = "", $sort = "\"Price\" ASC ");
-			$fields->AddFieldToTab("Root.Content.Pricing", new LiteralField("metatitleFixes", "Checkk all prices...".$link));
+			$link = DataObjectOneFieldUpdateController::popup_link($this->owner->ClassName, "Price", $where = "", $sort = " Title ASC ");
+			$fields->AddFieldToTab("Root.Content.Pricing", new LiteralField("metatitleFixes", "<h3>Edit all Prices</h3><p>Need to edit all prices? ".$link. " all prices</p>"));
 		}
 	}
 
