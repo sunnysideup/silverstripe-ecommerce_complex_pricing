@@ -12,17 +12,19 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 	}
 
 	function updateCMSFields(&$fields) {
+		if(class_exists("DataObjectOneFieldUpdateController")) {
+			$link = DataObjectOneFieldUpdateController::popup_link($this->owner->ClassName, "Price", $where = "", $sort = "Price ASC ");
+			$fields->AddFieldToTab("Root.Content.Pricing", new HeaderField("metatitleFixesHeader", "Quick review", 3));
+			$fields->AddFieldToTab("Root.Content.Pricing", new LiteralField("metatitleFixes", "Check all prices...".$link."<br /><br /><br />"));
+		}
 		$fields->addFieldsToTab(
 			"Root.Content.Pricing",
 			array(
-				$this->complexPricesHasManyTable(),
+				new HeaderField("ComplexPricesHeader", "Alternative Pricing", 3),
 				new LiteralField("ComplexPricesExplanation", "<p>Please enter <i>alternative</i> pricing below. You can enter a price per <a href=\"admin/security/\">security group</a> and or country.</p>"),
+				$this->complexPricesHasManyTable()
 			)
 		);
-		if(class_exists("DataObjectOneFieldUpdateController")) {
-			$link = DataObjectOneFieldUpdateController::popup_link($this->owner->ClassName, "Price", $where = "", $sort = " Title ASC ");
-			$fields->AddFieldToTab("Root.Content.Pricing", new LiteralField("metatitleFixes", "<h3>Edit all Prices</h3><p>Need to edit all prices? ".$link. " all prices</p>"));
-		}
 	}
 
 	protected function complexPricesHasManyTable(){
