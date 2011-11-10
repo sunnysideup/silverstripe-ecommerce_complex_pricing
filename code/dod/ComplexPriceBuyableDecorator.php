@@ -12,13 +12,19 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 	}
 
 	function updateCMSFields(&$fields) {
+		if($this->owner instanceOf SiteTree) {
+			$tabName = "Root.Content.Pricing";
+		}
+		else {
+			$tabName = "Root.Pricing";
+		}
 		if(class_exists("DataObjectOneFieldUpdateController")) {
 			$link = DataObjectOneFieldUpdateController::popup_link($this->owner->ClassName, "Price", $where = "", $sort = "Price ASC ");
-			$fields->AddFieldToTab("Root.Content.Pricing", new HeaderField("metatitleFixesHeader", "Quick review", 3));
-			$fields->AddFieldToTab("Root.Content.Pricing", new LiteralField("metatitleFixes", "Check all prices...".$link."<br /><br /><br />"));
+			$fields->AddFieldToTab($tabName, new HeaderField("metatitleFixesHeader", "Quick review", 3));
+			$fields->AddFieldToTab($tabName, new LiteralField("metatitleFixes", "Check all prices...".$link."<br /><br /><br />"));
 		}
 		$fields->addFieldsToTab(
-			"Root.Content.Pricing",
+			$tabName,
 			array(
 				new HeaderField("ComplexPricesHeader", "Alternative Pricing", 3),
 				new LiteralField("ComplexPricesExplanation", "<p>Please enter <i>alternative</i> pricing below. You can enter a price per <a href=\"admin/security/\">security group</a> and or country.</p>"),
@@ -47,7 +53,7 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 	}
 
 	function updateCalculatedPrice(&$startingPrice) {
-		$newPrice = null;
+		$newPrice = 0;
 		$fieldName = $this->owner->ClassName."ID";
 		$singleton = DataObject::get_one("ComplexPriceObject");
 		if($singleton) {
@@ -125,13 +131,10 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 				}
 			}
 		}
-		if(!$newPrice) {
-			return null;
-		}
-		else {
+		if($newPrice > 0) {
 			$startingPrice = $newPrice;
-			return $startingPrice;
 		}
+		return $startingPrice;
 	}
 
 }
