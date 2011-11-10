@@ -16,7 +16,7 @@
 				<% control Products %>
 				<tr>
 					<th scope="row">
-						<a href="$Link">$Title</a>
+						<a href="$Link">$Title (<% control ParentSegments %>$Title <% if Last %><% else %> / <% end_if %><% end_control %>)</a>
 					</th>
 					<td class="price">$CalculatedPrice.Nice</td>
 				</tr>
