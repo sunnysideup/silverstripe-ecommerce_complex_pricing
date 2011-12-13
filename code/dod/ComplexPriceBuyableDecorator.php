@@ -66,7 +66,7 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 					}
 				}
 			}
-			$prices = DataObject::get("ComplexPriceObject", "\"$fieldName\" = '".$this->owner->ID."' AND \"NoLongerValid\" = 0", "\"Price\" DESC");
+			$prices = DataObject::get("ComplexPriceObject", "\"$fieldName\" = '".$this->owner->ID."' AND \"NoLongerValid\" = 0", "\"NewPrice\" DESC");
 			$memberGroupsArray = array();
 			if($prices) {
 				if($member = Member::currentMember()) {
