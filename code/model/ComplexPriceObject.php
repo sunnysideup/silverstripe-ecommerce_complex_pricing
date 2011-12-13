@@ -30,7 +30,6 @@ class ComplexPriceObject extends DataObject {
 	);
 
 	public static $summary_fields = array(
-		'Price' => 'Price',
 		'From' => 'Valid From',
 		'Until' => 'Valid Until',
 		'AppliesTo' => 'Applies To',
