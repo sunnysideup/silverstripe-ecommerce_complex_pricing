@@ -24,7 +24,7 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 				"Price",
 				$where = "",
 				$sort = "Price ASC ",
-				$linkText = "Check all prices...";
+				$linkText = "Check all prices..."
 			);
 			$fields->AddFieldToTab($tabName, new HeaderField("metatitleFixesHeader", "Quick review", 3));
 			$fields->AddFieldToTab($tabName, new LiteralField("metatitleFixes", $link.".<br /><br /><br />"));
