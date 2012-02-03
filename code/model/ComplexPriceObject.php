@@ -14,7 +14,8 @@ class ComplexPriceObject extends DataObject {
 
 	public static $many_many = array(
 		'Groups' => 'Group',
-		'EcommerceCountries' => 'EcommerceCountry'
+		'EcommerceCountries' => 'EcommerceCountry',
+		'DiscountCouponOptions' => 'DiscountCouponOption'
 	);
 
 	public static $searchable_fields = array(
@@ -71,6 +72,12 @@ class ComplexPriceObject extends DataObject {
 		}
 		if($ecommerceCountries = DataObject::get("EcommerceCountry")) {
 			$fields->replaceField("EcommerceCountries", new CheckboxSetField("EcommerceCountries", "Where", $ecommerceCountries->toDropdownMap()));
+		}
+		else {
+			$fields->removeByName("EcommerceCountries");
+		}
+		if($discountCouponOptions = DataObject::get("DiscountCouponOption")) {
+			$fields->replaceField("DiscountCouponOptions", new CheckboxSetField("DiscountCouponOptions", "Discount Coupons", $discountCouponOptions));
 		}
 		else {
 			$fields->removeByName("EcommerceCountries");
