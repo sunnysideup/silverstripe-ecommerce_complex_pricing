@@ -31,47 +31,18 @@ class PriceListPage extends ProductGroup {
 		foreach($this->toHideArray as $name) {
 			$fields->removeByName($name);
 		}
-		$fields->addFieldToTab('Root.Content.Products',new CheckboxField("ShowParentProductGroupPages", _t("PriceListPage.NUMBEROFPARENTPAGESTOSHOW", "Show parent group pages with product")));
+		$fields->addFieldToTab('Root.Content.ProductDisplay',new CheckboxField("ShowParentProductGroupPages", _t("PriceListPage.NUMBEROFPARENTPAGESTOSHOW", "Show parent group pages with product")));
 		return $fields;
 	}
 
 
 	/**
-	 * Retrieve a set of products, based on the given parameters. Checks get query for sorting and pagination.
-	 *
-	 * @param string $extraFilter Additional SQL filters to apply to the Product retrieval
-	 * @param boolean $recursive
+	 * Retrieve a set of products, based on the given parameters.
+	 * Add Parent Group Pages
 	 * @return DataObjectSet | Null
 	 */
-	function ProductsShowable($extraFilter = '', $recursive = true){
-
-		// WHERE
-		$filter = $this->getStandardFilter(); //
-		if($extraFilter) {
-			$filter.= " AND $extraFilter";
-		}
-		$where = "\"Price\" > 0 $filter";
-
-		//SORT BY
-		if(!isset($_GET['sortby'])) {
-			$sortKey = $this->MyDefaultSortOrder();
-		}
-		else {
-			$sortKey = Convert::raw2sqL($_GET['sortby']);
-		}
-		$sort = $this->getSortOptionSQL($sortKey);
-
-		//JOIN
-		$join = "";
-
-		//LIMIT
-		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'] : "0";
-		$limit .= ", ".$this->MyNumberOfProductsPerPage();
-
-		//ACTION
-		$products = DataObject::get('Product',$where,$sort, null,$limit);
-		$allProducts = DataObject::get('Product',$where,$sort);
-		$this->totalCount = $allProducts->count();
+	protected function currentFinalProducts($buyables){
+		$products = parent::currentFinalProducts($buyables);
 		if($this->ShowParentProductGroupPages) {
 			$dos = null;
 			if($products) {
