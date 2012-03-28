@@ -149,12 +149,12 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 class ComplexPriceBuyableDecorator_ComplexPriceObject extends DataObjectDecorator {
 
 	public function extraStatics() {
-		if(class_exists("EcommerceConfig")) {
+		/*if(class_exists("EcommerceConfig")) {
 			$array = EcommerceConfig::get("Buyable", "array_of_buyables");
 		}
-		else {
+		else {*/
 			$array = Buyable::get_array_of_buyables();
-		}
+		//}
 		$hasOneArray = array();
 		if($array && is_array($array) && count($array)) {
 			foreach($array as $item) {
