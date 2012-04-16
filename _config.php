@@ -8,8 +8,6 @@
 //DataObject::add_extension("Product", "ComplexPriceBuyableDecorator");
 //DataObject::add_extension("ProductVariation", "ComplexPriceBuyableDecorator");
 //DataObject::add_extension("ComplexPriceObject", "ComplexPriceBuyableDecorator_ComplexPriceObject");
-
-
 //MAY SET
 //ProductsAndGroupsModelAdmin::add_managed_model("ComplexPriceObject");
 //===================---------------- END ecommerce_group_pricing MODULE ----------------===================
