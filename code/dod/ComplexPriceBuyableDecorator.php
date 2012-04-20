@@ -149,10 +149,10 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 class ComplexPriceBuyableDecorator_ComplexPriceObject extends DataObjectDecorator {
 
 	public function extraStatics() {
-		$array = EcommerceConfig::get("Buyable", "array_of_buyables");
+		$buyables = EcommerceConfig::get("EcommerceDBConfig", "array_of_buyables");
 		$hasOneArray = array();
-		if($array && is_array($array) && count($array)) {
-			foreach($array as $item) {
+		if($buyables && is_array($buyables) && count($buyables)) {
+			foreach($buyables as $item) {
 				$hasOneArray[$item] = $item;
 			}
 			return array (
@@ -164,14 +164,9 @@ class ComplexPriceBuyableDecorator_ComplexPriceObject extends DataObjectDecorato
 
 	function updateCMSFields(&$fields) {
 		$this->owner->getBuyable();
-		if(class_exists("EcommerceConfig")) {
-			$array = EcommerceConfig::get("Buyable", "array_of_buyables");
-		}
-		else {
-			$array = Buyable::get_array_of_buyables();
-		}
-		if($array && is_array($array) && count($array)) {
-			foreach($array as $item) {
+		$buyables = EcommerceConfig::get("EcommerceDBConfig", "array_of_buyables");
+		if($buyables && is_array($buyables) && count($buyables)) {
+			foreach($buyables as $item) {
 				$fields->replaceField($item."ID", new HiddenField($item."ID"));
 			}
 		}
