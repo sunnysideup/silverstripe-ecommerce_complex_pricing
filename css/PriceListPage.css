@@ -1,0 +1,19 @@
+#PriceList table {width: 100%;border-collapse:collapse;}
+#PriceList th, #PriceList td {border-bottom: dotted 2px #ccc!important; background-color: #FFF; margin: 0px; padding: 0px;}
+#PriceList tr.even th, #PriceList tr.even td {background-color: #ccc;}
+#PriceList div.inner {
+	position: relative;
+	top: 0.3em;
+	padding: 1em 1em 0 0;
+	background: #fff;
+  display: inline-block;
+ }
+#PriceList div.inner a {text-decoration: none;}
+
+#PriceList .price div.inner {
+	padding: 1em 0em 0 1em;
+	text-align: right;
+	display: block;
+}
+
+#PriceList .price {width: 7em;}
