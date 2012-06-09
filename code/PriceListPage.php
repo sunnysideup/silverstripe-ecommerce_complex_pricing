@@ -13,64 +13,116 @@
 
 class PriceListPage extends ProductGroup {
 
+	/**
+	 * standard SS variable
+	 * @static Array | String
+	 *
+	 */
 	public static $icon = "ecommerce_complex_pricing/images/treeicons/PriceListPage";
 
+	/**
+	 * standard SS variable
+	 * @static Array
+	 *
+	 */
 	public static $db = array(
-		"ShowParentProductGroupPages" => "Int"
+		"NumberOfLevelsToHide" => "Int"
 	);
 
-	protected $toHideArray = array(
-		"LevelOfProductsToShow"
+	/**
+	 * standard SS variable
+	 * @static Array
+	 *
+	 */
+	public static $defaults = array(
+		"LevelOfProductsToShow" => -1,
+		"NumberOfProductsPerPage" => 100,
+		"NumberOfLevelsToHide" => 1
 	);
 
 
+	/**
+	 * standard SS variable
+	 * @static Array
+	 *
+	 */
 	public static $allowed_children = "none";
 
+
+	/**
+	 * fields from product group that should be hidden
+	 * @Array
+	 *
+	 */
+	protected $toHideArray = array();
+
+
+	/**
+	 * standard SS Method
+	 * return FieldSet
+	 *
+	 */
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
 		foreach($this->toHideArray as $name) {
-			$fields->removeByName($name);
+			//$fields->removeByName($name);
 		}
-		$fields->addFieldToTab('Root.Content.ProductDisplay',new CheckboxField("ShowParentProductGroupPages", _t("PriceListPage.NUMBEROFPARENTPAGESTOSHOW", "Show parent group pages with product")));
+		$fields->addFieldToTab('Root.Content.ProductDisplay',new NumericField("NumberOfLevelsToHide", _t("PriceListPage.NUMBEROFLEVELSTOHIDE", "Nummber of levels to hide from the top down (e.g. set to one to hide main (top) product group holder). To hide all the parent product groups you can set this variable to something like 999.")));
 		return $fields;
 	}
 
 
 	/**
 	 * Retrieve a set of products, based on the given parameters.
-	 * Add Parent Group Pages
+	 * Add Parent Group Pages to diplay within list.
+	 *
+	 * Note that you can hide the "top level"
 	 * @return DataObjectSet | Null
 	 */
 	protected function currentFinalProducts($buyables){
 		$products = parent::currentFinalProducts($buyables);
-		if($this->ShowParentProductGroupPages) {
-			$dos = null;
-			if($products) {
-				foreach($products as $product) {
-					$dos[$product->ID] = new DataObjectSet();
+		if($products) {
+			foreach($products as $product) {
+				$product->ParentSegments = null;
+				if($this->NumberOfLevelsToHide < 20) {
 					$segmentArray = array();
 					$item = $product;
 					while($item && $item->ParentID) {
 						$item = DataObject::get_by_id("ProductGroup", $item->ParentID);
 						if($item) {
-							$segmentArray[] = array("URLSegment" => $item->URLSegment, "ID" => $item->ID, "ClassName" => $item->ClassName, "Title" => $item->Title, "Link" => $item->Link());
+							$segmentArray[] = array(
+								"URLSegment" => $item->URLSegment,
+								"ID" => $item->ID,
+								"ClassName" => $item->ClassName,
+								"Title" => $item->Title,
+								"Link" => $item->Link()
+							);
 						}
 					}
-					$segmentArray = array_reverse($segmentArray);
-					foreach($segmentArray as $segment) {
-						$dos[$product->ID]->push(new ArrayData($segment));
+					if(count($segmentArray)) {
+						$product->ParentSegments = new DataObjectSet();
+						$segmentArray = array_reverse($segmentArray);
+						foreach($segmentArray as $key => $segment) {
+							if($key > $this->NumberOfLevelsToHide) {
+								$product->ParentSegments->push(new ArrayData($segment));
+							}
+						}
 					}
-					$product->ParentSegments = $dos[$product->ID] ;
-					$dos = null;
 				}
 			}
 		}
 		return $products;
 	}
+
 }
 
 class PriceListPage_Controller extends ProductGroup_Controller {
 
+
+	function init(){
+		parent::init();
+		Requirements::themedCSS("PriceListPage");
+	}
 
 }
 

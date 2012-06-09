@@ -14,13 +14,21 @@
 		</div>
 		<table summary="price list">
 			<thead></thead>
+			<tfoot></tfoot>
 			<tbody>
 				<% control Products %>
 				<tr>
-					<th scope="row">
-						<a href="$Link">$Title (<% control ParentSegments %>$Title <% if Last %><% else %> / <% end_if %><% end_control %>)</a>
+					<th scope="row" class="$EvenOdd">
+						<div class="inner">
+							<% if ParentSegments %><span class="parents"><% control ParentSegments %>$Title / <% end_control %></span><% end_if %>
+							<a href="$Link">$Title</a>
+						</div>
 					</th>
-					<td class="price">$CalculatedPrice.Nice</td>
+					<td class="price">
+						<div class="inner">
+							$CalculatedPrice.Nice
+						</div>
+					</td>
 				</tr>
 				<% end_control %>
 			</tbody>
