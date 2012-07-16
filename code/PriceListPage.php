@@ -50,23 +50,12 @@ class PriceListPage extends ProductGroup {
 
 
 	/**
-	 * fields from product group that should be hidden
-	 * @Array
-	 *
-	 */
-	protected $toHideArray = array();
-
-
-	/**
 	 * standard SS Method
 	 * return FieldSet
 	 *
 	 */
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		foreach($this->toHideArray as $name) {
-			//$fields->removeByName($name);
-		}
 		$fields->addFieldToTab('Root.Content.ProductDisplay',new NumericField("NumberOfLevelsToHide", _t("PriceListPage.NUMBEROFLEVELSTOHIDE", "Nummber of levels to hide from the top down (e.g. set to one to hide main (top) product group holder). To hide all the parent product groups you can set this variable to something like 999.")));
 		return $fields;
 	}
