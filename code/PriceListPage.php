@@ -14,6 +14,18 @@
 class PriceListPage extends ProductGroup {
 
 	/**
+	 * Standard SS variable.
+	 */
+	public static $singular_name = "Price List Page";
+		function i18n_singular_name() { return _t("ProductGroup.PRICELISTPAGE", "Price List Page");}
+
+	/**
+	 * Standard SS variable.
+	 */
+	public static $plural_name = "Price List Pages";
+		function i18n_plural_name() { return _t("ProductGroup.PRICELISTPAGES", "Price List Pages");}
+
+	/**
 	 * standard SS variable
 	 * @static Array | String
 	 *
