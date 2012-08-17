@@ -20,13 +20,13 @@
 				<tr>
 					<th scope="row" class="$EvenOdd">
 						<div class="inner">
-							<% if ParentSegments %><span class="parents"><% control ParentSegments %>$Title / <% end_control %></span><% end_if %>
 							<a href="$Link">$Title</a>
 						</div>
 					</th>
 					<td class="price">
 						<div class="inner">
 							$CalculatedPrice.Nice
+							<% include Order_DisplayPrice %>
 						</div>
 					</td>
 				</tr>
