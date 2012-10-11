@@ -68,7 +68,7 @@ class PriceListPage extends ProductGroup {
 	 */
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->addFieldToTab('Root.Content.ProductDisplay',new NumericField("NumberOfLevelsToHide", _t("PriceListPage.NUMBEROFLEVELSTOHIDE", "Nummber of levels to hide from the top down (e.g. set to one to hide main (top) product group holder). To hide all the parent product groups you can set this variable to something like 999.")));
+		$fields->addFieldToTab('Root.Content.ProductDisplay',new NumericField("NumberOfLevelsToHide", _t("PriceListPage.NUMBEROFLEVELSTOHIDE", "Number of levels to hide from the top down (e.g. set to one to hide main (top) product group holder). To hide all the parent product groups you can set this variable to something like 999.")));
 		return $fields;
 	}
 
