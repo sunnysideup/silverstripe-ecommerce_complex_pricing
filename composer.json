@@ -1,5 +1,5 @@
 {
-	"name": "silverstripe/ecommerce_complex_pricing",
+	"name": "sunnysideup/ecommerce_complex_pricing",
 	"type": "silverstripe-module",
 	"description": "add pricing rules to your silverstripe e-commerce (e.g. discount per group or per country)",
 	"homepage": "http://www.silverstripe-ecommerce.com",
