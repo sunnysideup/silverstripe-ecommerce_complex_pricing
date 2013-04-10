@@ -59,7 +59,7 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 	}
 
 	function updateCalculatedPrice(&$startingPrice) {
-		$newPrice = 0;
+		$newPrice = -1;
 		$fieldName = $this->owner->ClassName."ID";
 		$singleton = DataObject::get_one("ComplexPriceObject");
 		if($singleton) {
@@ -137,7 +137,7 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 				}
 			}
 		}
-		if($newPrice > 0) {
+		if($newPrice > -1) {
 			$startingPrice = $newPrice;
 		}
 		return $startingPrice;

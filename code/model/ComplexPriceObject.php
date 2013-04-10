@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * This object is attached to any Buyable
+ * using the ComplexPriceBuyableDecorator
+ *
+ *
+ */
 
 class ComplexPriceObject extends DataObject {
 
@@ -14,8 +19,7 @@ class ComplexPriceObject extends DataObject {
 
 	public static $many_many = array(
 		'Groups' => 'Group',
-		'EcommerceCountries' => 'EcommerceCountry',
-		'DiscountCouponOptions' => 'DiscountCouponOption'
+		'EcommerceCountries' => 'EcommerceCountry'
 	);
 
 	public static $searchable_fields = array(
@@ -99,6 +103,10 @@ class ComplexPriceObject extends DataObject {
 		}
 	}
 
+	/**
+	 *
+	 * works out any price reductions
+	 */
 	function CalculatedPrice() {return $this->getCalculatedPrice();}
 	function getCalculatedPrice() {
 		$buyable = $this->getBuyable();
@@ -166,7 +174,7 @@ class ComplexPriceObject extends DataObject {
 			$errors[] = "The UNTIL field needs to be after 1 Jan 2000";
 		}
 		if(strtotime($this->Until) < strtotime($this->From)) {
-			$errors[] = "The UNTIL field needs to be after the UNTIL field";
+			$errors[] = "The UNTIL field needs to be after the FROM field";
 		}
 		if($this->Percentage < 0 || $this->Percentage > 100) {
 			$errors[] = "The PERCENTAGE field needs to be between 0 and 100";
