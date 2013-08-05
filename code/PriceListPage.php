@@ -80,8 +80,8 @@ class PriceListPage extends ProductGroup {
 	 * Note that you can hide the "top level"
 	 * @return DataObjectSet | Null
 	 */
-	protected function currentFinalProducts($buyables){
-		$products = parent::currentFinalProducts($buyables);
+	protected function currentFinalProducts(){
+		$products = parent::currentFinalProducts();
 		if($products) {
 			foreach($products as $product) {
 				$product->ParentSegments = null;

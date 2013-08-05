@@ -55,12 +55,13 @@ class ComplexPriceObject extends DataObject {
 	public static $plural_name = "Prices";
 
 	//defaults
-	public static $default_sort = "\"NoLongerValid\" ASC, \"Until\" DESC, \"From\" DESC ";
+	public static $default_sort = "\"Until\" DESC";
 
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->replaceField("From", new TextField("From", "Valid From - add any date and time"));
-		$fields->replaceField("Until", new TextField("Until", "Valid Until - add any date and time"));
+
+		$fields->replaceField("From", $from = new DateField("From", "Valid From - add any date and time"));
+		$fields->replaceField("Until", $until = new DateField("Until", "Valid Until - add any date and time"));
 		$fields->replaceField("NewPrice", new CurrencyField("NewPrice", "PRICE (OPTION 1 / 3) - only enter if there is a set new price independent of the 'standard' price."));
 		$fields->replaceField("Percentage", new NumericField("Percentage", "PERCENTAGE (OPTIONAL 2/ 3) discount from 0 (0% discount) to 100 (100% discount)."));
 		$fields->replaceField("Reduction", new CurrencyField("Reduction", "REDUCTION (OPTION 3 /3 ) - e.g. if you enter 2.00 then the new price will be the standard product price minus 2."));
@@ -69,13 +70,13 @@ class ComplexPriceObject extends DataObject {
 			$fields->removeByName("NoLongerValid");
 		}
 		if($groups = DataObject::get("Group")) {
-			$fields->replaceField("Groups", new CheckboxSetField("Groups", "Who", $groups->toDropdownMap()));
+			$fields->replaceField("Groups", new CheckboxSetField("Groups", "Who", $groups->Map()));
 		}
 		else {
 			$fields->removeByName("Groups");
 		}
 		if($ecommerceCountries = DataObject::get("EcommerceCountry")) {
-			$fields->replaceField("EcommerceCountries", new CheckboxSetField("EcommerceCountries", "Where", $ecommerceCountries->toDropdownMap()));
+			$fields->replaceField("EcommerceCountries", new CheckboxSetField("EcommerceCountries", "Where", $ecommerceCountries->Map()));
 		}
 		else {
 			$fields->removeByName("EcommerceCountries");
@@ -87,6 +88,8 @@ class ComplexPriceObject extends DataObject {
 			$fields->removeByName("EcommerceCountries");
 		}
 
+		$from->setConfig('showcalendar', true);
+		$until->setConfig('showcalendar', true);
 		return $fields;
 	}
 
