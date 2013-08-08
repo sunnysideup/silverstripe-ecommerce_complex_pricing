@@ -1,23 +1,15 @@
 <?php
 
 
-class ComplexPriceBuyableDecorator extends DataObjectDecorator {
+class ComplexPriceBuyableDecorator extends DataExtension {
 
-	public function extraStatics() {
-		return array (
-			'has_many' => array(
-				'ComplexPriceObjects' => 'ComplexPriceObject'
-			)
-		);
-	}
+	static $has_many = array(
+		'ComplexPriceObjects' => 'ComplexPriceObject'
+	);
 
-	function updateCMSFields(&$fields) {
-		if($this->owner instanceOf SiteTree) {
-			$tabName = "Root.Content.Pricing";
-		}
-		else {
-			$tabName = "Root.Pricing";
-		}
+	public function updateCMSFields(FieldList $fields) {
+		$tabName = 'Root.Pricing';
+
 		if(class_exists("DataObjectOneFieldUpdateController")) {
 			$link = DataObjectOneFieldUpdateController::popup_link(
 				$this->owner->ClassName,
@@ -29,9 +21,15 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 			$fields->AddFieldToTab($tabName, new HeaderField("metatitleFixesHeader", "Quick review", 3));
 			$fields->AddFieldToTab($tabName, new LiteralField("metatitleFixes", $link.".<br /><br /><br />"));
 		}
+
+		// move price field under new 'Pricing' tab
+//		$priceField = $fields->fieldByName('Root.Details.Price');
+//		$fields->remove($priceField);
+
 		$fields->addFieldsToTab(
 			$tabName,
 			array(
+//				$priceField,
 				new HeaderField("ComplexPricesHeader", "Alternative Pricing", 3),
 				new LiteralField("ComplexPricesExplanation", "<p>Please enter <i>alternative</i> pricing below. You can enter a price per <a href=\"admin/security/\">security group</a> and/or per country.</p>"),
 				$this->complexPricesHasManyTable()
@@ -40,13 +38,16 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 	}
 
 	protected function complexPricesHasManyTable(){
-		$complexTableField = new HasManyComplexTableField(
-			$controller = $this->owner,
-			$name = "ComplexPriceObjects",
-			$sourceClass = "ComplexPriceObject"
-		);
-		$complexTableField->setRelationAutoSetting(true);
-		return $complexTableField;
+//		$complexTableField = new HasManyComplexTableField(
+//			$controller = $this->owner,
+//			$name = "ComplexPriceObjects",
+//			$sourceClass = "ComplexPriceObject"
+//		);
+//		$complexTableField->setRelationAutoSetting(true);
+//		return $complexTableField;
+		$gridCfg = new GridFieldConfig_RelationEditor();
+		$grid = new GridField('ComplexPriceObjects', '', $this->owner->ComplexPriceObjects(), $gridCfg);
+		return $grid;
 	}
 
 	function HasDiscount() {
@@ -63,6 +64,7 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 		$fieldName = $this->owner->ClassName."ID";
 		$singleton = DataObject::get_one("ComplexPriceObject");
 		if($singleton) {
+			// Check that ComplexPriceObject can be joined to this type of object
 			if(!$singleton->hasField($fieldName)) {
 				$ancestorArray = ClassInfo::ancestry($this->owner, true );
 				foreach($ancestorArray as $ancestor) {
@@ -72,10 +74,13 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 					}
 				}
 			}
+
+			// Load up the alternate prices for this product
 			$prices = DataObject::get("ComplexPriceObject", "\"$fieldName\" = '".$this->owner->ID."' AND \"NoLongerValid\" = 0", "\"NewPrice\" DESC");
 			$memberGroupsArray = array();
 			if($prices) {
-				if($member = Member::currentMember()) {
+				// Load up the groups for the current memeber, if any
+				if($member = Member::currentUser()) {
 					if($memberGroupComponents = $member->getManyManyComponents('Groups')) {
 						if($memberGroupComponents && $memberGroupComponents->count()) {
 							$memberGroupsArray = $memberGroupComponents->column("ID");
@@ -85,13 +90,17 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 						}
 					}
 				}
+
 				$countryID = EcommerceCountry::get_country_id();
+
+				// Look at each price and see if it can be used
 				foreach($prices as $price) {
 					$priceCanBeUsed = true;
+
+					// Does it pass the group filter?
 					if($priceGroupComponents = $price->getManyManyComponents('Groups')) {
-						$priceCanBeUsed = false;
 						if($priceGroupComponents && $priceGroupComponents->count()) {
-							//print_r($price->Groups());
+							$priceCanBeUsed = false;
 							$priceGroupArray = $priceGroupComponents->column("ID");
 							if(!is_array($priceGroupArray)) {$priceGroupArray = array();}
 							$interSectionArray = array_intersect($priceGroupArray, $memberGroupsArray);
@@ -100,6 +109,8 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 							}
 						}
 					}
+
+					// Does it pass the country filter?
 					if($priceCanBeUsed) {
 						if($priceCountryComponents = $price->getManyManyComponents('EcommerceCountries')) {
 							if($priceCountryComponents && $priceCountryComponents->count()) {
@@ -112,6 +123,8 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 							}
 						}
 					}
+
+					// Does it pass the date filter?
 					if($priceCanBeUsed) {
 						$nowTS = strtotime("now");
 						if($price->From) {
@@ -122,6 +135,7 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 							}
 						}
 					}
+
 					if($priceCanBeUsed) {
 						if($price->Until) {
 							$priceCanBeUsed = false;
@@ -131,24 +145,28 @@ class ComplexPriceBuyableDecorator extends DataObjectDecorator {
 							}
 						}
 					}
+
+					// If so, apply the price
 					if($priceCanBeUsed) {
 						$newPrice = $price->getCalculatedPrice();
 					}
 				}
 			}
 		}
+
 		if($newPrice > -1) {
 			$startingPrice = $newPrice;
 		}
+
 		return $startingPrice;
 	}
 
 }
 
 
-class ComplexPriceBuyableDecorator_ComplexPriceObject extends DataObjectDecorator {
+class ComplexPriceBuyableDecorator_ComplexPriceObject extends DataExtension {
 
-	public function extraStatics() {
+	public static function get_extra_config($class, $extension, $args) {
 		$buyables = EcommerceConfig::get("EcommerceDBConfig", "array_of_buyables");
 		$hasOneArray = array();
 		if($buyables && is_array($buyables) && count($buyables)) {
@@ -162,7 +180,7 @@ class ComplexPriceBuyableDecorator_ComplexPriceObject extends DataObjectDecorato
 		return array();
 	}
 
-	function updateCMSFields(&$fields) {
+	public function updateCMSFields(FieldList $fields) {
 		$this->owner->getBuyable();
 		$buyables = EcommerceConfig::get("EcommerceDBConfig", "array_of_buyables");
 		if($buyables && is_array($buyables) && count($buyables)) {
