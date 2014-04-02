@@ -16,13 +16,13 @@ class PriceListPage extends ProductGroup {
 	/**
 	 * Standard SS variable.
 	 */
-	public static $singular_name = "Price List Page";
+	private static $singular_name = "Price List Page";
 		function i18n_singular_name() { return _t("ProductGroup.PRICELISTPAGE", "Price List Page");}
 
 	/**
 	 * Standard SS variable.
 	 */
-	public static $plural_name = "Price List Pages";
+	private static $plural_name = "Price List Pages";
 		function i18n_plural_name() { return _t("ProductGroup.PRICELISTPAGES", "Price List Pages");}
 
 	/**
@@ -30,14 +30,14 @@ class PriceListPage extends ProductGroup {
 	 * @static Array | String
 	 *
 	 */
-	public static $icon = "ecommerce_complex_pricing/images/treeicons/PriceListPage";
+	private static $icon = "ecommerce_complex_pricing/images/treeicons/PriceListPage";
 
 	/**
 	 * standard SS variable
 	 * @static Array
 	 *
 	 */
-	public static $db = array(
+	private static $db = array(
 		"NumberOfLevelsToHide" => "Int"
 	);
 
@@ -46,7 +46,7 @@ class PriceListPage extends ProductGroup {
 	 * @static Array
 	 *
 	 */
-	public static $defaults = array(
+	private static $defaults = array(
 		"LevelOfProductsToShow" => -1,
 		"NumberOfProductsPerPage" => 100,
 		"NumberOfLevelsToHide" => 1
@@ -58,7 +58,7 @@ class PriceListPage extends ProductGroup {
 	 * @static Array
 	 *
 	 */
-	public static $allowed_children = "none";
+	private static $allowed_children = "none";
 
 
 	/**
@@ -68,7 +68,7 @@ class PriceListPage extends ProductGroup {
 	 */
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->addFieldToTab('Root.Content.ProductDisplay',new NumericField("NumberOfLevelsToHide", _t("PriceListPage.NUMBEROFLEVELSTOHIDE", "Number of levels to hide from the top down (e.g. set to one to hide main (top) product group holder). To hide all the parent product groups you can set this variable to something like 999.")));
+		$fields->addFieldToTab('Root.ProductDisplay',new NumericField("NumberOfLevelsToHide", _t("PriceListPage.NUMBEROFLEVELSTOHIDE", "Number of levels to hide from the top down (e.g. set to one to hide main (top) product group holder). To hide all the parent product groups you can set this variable to something like 999.")));
 		return $fields;
 	}
 
@@ -89,7 +89,7 @@ class PriceListPage extends ProductGroup {
 					$segmentArray = array();
 					$item = $product;
 					while($item && $item->ParentID) {
-						$item = DataObject::get_by_id("ProductGroup", $item->ParentID);
+						$item = ProductGroup::get()->byID($item->ParentID);
 						if($item) {
 							$segmentArray[] = array(
 								"URLSegment" => $item->URLSegment,
@@ -101,7 +101,7 @@ class PriceListPage extends ProductGroup {
 						}
 					}
 					if(count($segmentArray)) {
-						$product->ParentSegments = new DataObjectSet();
+						$product->ParentSegments = new ArrayList();
 						$segmentArray = array_reverse($segmentArray);
 						foreach($segmentArray as $key => $segment) {
 							if($key > $this->NumberOfLevelsToHide) {

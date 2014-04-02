@@ -3,7 +3,7 @@
 
 class ComplexPriceBuyableDecorator extends DataExtension {
 
-	static $has_many = array(
+	private static $has_many = array(
 		'ComplexPriceObjects' => 'ComplexPriceObject'
 	);
 
@@ -18,8 +18,8 @@ class ComplexPriceBuyableDecorator extends DataExtension {
 				$sort = "Price ASC ",
 				$linkText = "Check all prices..."
 			);
-			$fields->AddFieldToTab($tabName, new HeaderField("metatitleFixesHeader", "Quick review", 3));
-			$fields->AddFieldToTab($tabName, new LiteralField("metatitleFixes", $link.".<br /><br /><br />"));
+			$fields->AddFieldToTab($tabName, new HeaderField("MetaTitleFixesHeader", "Quick review", 3));
+			$fields->AddFieldToTab($tabName, new LiteralField("MetaTitleFixes", $link.".<br /><br /><br />"));
 		}
 
 		// move price field under new 'Pricing' tab
@@ -38,13 +38,6 @@ class ComplexPriceBuyableDecorator extends DataExtension {
 	}
 
 	protected function complexPricesHasManyTable(){
-//		$complexTableField = new HasManyComplexTableField(
-//			$controller = $this->owner,
-//			$name = "ComplexPriceObjects",
-//			$sourceClass = "ComplexPriceObject"
-//		);
-//		$complexTableField->setRelationAutoSetting(true);
-//		return $complexTableField;
 		$gridCfg = new GridFieldConfig_RelationEditor();
 		$grid = new GridField('ComplexPriceObjects', '', $this->owner->ComplexPriceObjects(), $gridCfg);
 		return $grid;
@@ -62,7 +55,7 @@ class ComplexPriceBuyableDecorator extends DataExtension {
 	function updateCalculatedPrice(&$startingPrice) {
 		$newPrice = -1;
 		$fieldName = $this->owner->ClassName."ID";
-		$singleton = DataObject::get_one("ComplexPriceObject");
+		$singleton = ComplexPriceObject::get()->first();
 		if($singleton) {
 			// Check that ComplexPriceObject can be joined to this type of object
 			if(!$singleton->hasField($fieldName)) {
@@ -76,9 +69,11 @@ class ComplexPriceBuyableDecorator extends DataExtension {
 			}
 
 			// Load up the alternate prices for this product
-			$prices = DataObject::get("ComplexPriceObject", "\"$fieldName\" = '".$this->owner->ID."' AND \"NoLongerValid\" = 0", "\"NewPrice\" DESC");
+			$prices = ComplexPriceObject::get()
+				->filter(array($fieldName => $this->owner->ID, "NoLongerValid" => 0))
+				->sort("NewPrice", "DESC");;
 			$memberGroupsArray = array();
-			if($prices) {
+			if($prices->count()) {
 				// Load up the groups for the current memeber, if any
 				if($member = Member::currentUser()) {
 					if($memberGroupComponents = $member->getManyManyComponents('Groups')) {

@@ -14,8 +14,9 @@
 		}
 	],
 	"require":{
-		"php": ">=5.3.2",
-		"silverstripe/framework": "~3.0",
-		"sunnysideup/ecommerce": "~3.0"
+		"sunnysideup/ecommerce": "dev-master"
+	},
+	"extra": {
+		"installer-name": "ecommerce_complex_pricing"
 	}
 }

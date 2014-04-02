@@ -8,7 +8,7 @@
 
 class ComplexPriceObject extends DataObject {
 
-	public static $db = array(
+	private static $db = array(
 		'NewPrice' => 'Currency',
 		'Percentage' => 'Double',
 		'Reduction' => 'Currency',
@@ -17,24 +17,24 @@ class ComplexPriceObject extends DataObject {
 		'NoLongerValid' => 'Boolean'
 	);
 
-	public static $many_many = array(
+	private static $many_many = array(
 		'Groups' => 'Group',
 		'EcommerceCountries' => 'EcommerceCountry'
 	);
 
-	public static $searchable_fields = array(
+	private static $searchable_fields = array(
 		"NoLongerValid" => true,
 		"From" => true,
 		"Until" => true
 	);
 
-	public static $field_labels = array(
+	private static $field_labels = array(
 		'From' => 'Valid From',
 		'Until' => 'Valid Until',
 		'NoLongerValidNice' => 'Valid?'
 	);
 
-	public static $summary_fields = array(
+	private static $summary_fields = array(
 		'From' => 'Valid From',
 		'Until' => 'Valid Until',
 		'AppliesTo' => 'Applies To',
@@ -42,7 +42,7 @@ class ComplexPriceObject extends DataObject {
 		'NoLongerValidNice' => 'Valid'
 	);
 
-	public static $casting = array(
+	private static $casting = array(
 		'NoLongerValidNice' => 'Varchar',
 		'Buyable' => 'DataOject',
 		'Name' => 'Varchar',
@@ -50,12 +50,12 @@ class ComplexPriceObject extends DataObject {
 		'AppliesTo' => 'Text'
 	);
 
-	public static $singular_name = "Price";
+	private static $singular_name = "Price";
 
-	public static $plural_name = "Prices";
+	private static $plural_name = "Prices";
 
 	//defaults
-	public static $default_sort = "\"Until\" DESC";
+	private static $default_sort = "\"Until\" DESC";
 
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
@@ -69,23 +69,25 @@ class ComplexPriceObject extends DataObject {
 			$fields->addFieldToTab("Root.Main", new LiteralField("SaveFirst", "<p>Please save first - and then select security groups / countries</p>"));
 			$fields->removeByName("NoLongerValid");
 		}
-		if($groups = DataObject::get("Group")) {
-			$fields->replaceField("Groups", new CheckboxSetField("Groups", "Who", $groups->Map()));
+		if($groups = Group::get()->count()) {
+			$groups = Group::get();
+			$fields->replaceField("Groups", new CheckboxSetField("Groups", "Who", $groups->map()->toArray()));
 		}
 		else {
 			$fields->removeByName("Groups");
 		}
-		if($ecommerceCountries = DataObject::get("EcommerceCountry")) {
-			$fields->replaceField("EcommerceCountries", new CheckboxSetField("EcommerceCountries", "Where", $ecommerceCountries->Map()));
+		if($ecommerceCountries = EcommerceCountry::get()) {
+			$fields->replaceField("EcommerceCountries", new CheckboxSetField("EcommerceCountries", "Where", $ecommerceCountries->map()->toArray()));
 		}
 		else {
 			$fields->removeByName("EcommerceCountries");
 		}
-		if($discountCouponOptions = DataObject::get("DiscountCouponOption")) {
-			$fields->replaceField("DiscountCouponOptions", new CheckboxSetField("DiscountCouponOptions", "Discount Coupons", $discountCouponOptions));
+		$discountCouponOptions = DiscountCouponOption::get()
+		if($discountCouponOptions->count()) {
+			$fields->replaceField("DiscountCouponOptions", new CheckboxSetField("DiscountCouponOptions", "Discount Coupons", $discountCouponOptions->map()->toArray()));
 		}
 		else {
-			$fields->removeByName("EcommerceCountries");
+			$fields->removeByName("DiscountCouponOptions");
 		}
 
 		$from->setConfig('showcalendar', true);
@@ -100,7 +102,7 @@ class ComplexPriceObject extends DataObject {
 			foreach($array as $className) {
 				$fieldName = $className."ID";
 				if(isset($this->$fieldName) && $this->$fieldName > 0) {
-					return DataObject::get_by_id($className, $this->$fieldName);
+					return $className::get()->byID($this->$fieldName);
 				}
 			}
 		}
