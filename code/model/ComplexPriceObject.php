@@ -82,9 +82,8 @@ class ComplexPriceObject extends DataObject {
 		else {
 			$fields->removeByName("EcommerceCountries");
 		}
-		$discountCouponOptions = DiscountCouponOption::get()
-		if($discountCouponOptions->count()) {
-			$fields->replaceField("DiscountCouponOptions", new CheckboxSetField("DiscountCouponOptions", "Discount Coupons", $discountCouponOptions->map()->toArray()));
+		if(DiscountCouponOption::get()->count()) {
+			$fields->replaceField("DiscountCouponOptions", new CheckboxSetField("DiscountCouponOptions", "Discount Coupons", DiscountCouponOption::get()->map()->toArray()));
 		}
 		else {
 			$fields->removeByName("DiscountCouponOptions");
