@@ -10,13 +10,15 @@
 <% if Products %>
 	<div id="PriceList" class="category">
 		<div class="resultsBar">
-			<% if SortLinks %><span class="sortOptions"><% _t('ProductGroup.SORTBY','Sort by') %> <% with/loop SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_with/loop %></span><% end_if %>
+			<% if SortLinks %><span class="sortOptions"><% _t('ProductGroup.SORTBY','Sort by') %>
+			<% loop SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_loop %></span>
+			<% end_if %>
 		</div>
 		<table summary="price list">
 			<thead></thead>
 			<tfoot></tfoot>
 			<tbody>
-				<% with/loop Products %>
+				<% loop Products %>
 				<tr>
 					<th scope="row" class="$EvenOdd">
 						<div class="inner">
@@ -30,7 +32,7 @@
 						</div>
 					</td>
 				</tr>
-				<% end_with/loop %>
+				<% end_loop %>
 			</tbody>
 		</table>
 <% include ProductGroupPagination %>

@@ -122,7 +122,7 @@ class PriceListPage_Controller extends ProductGroup_Controller {
 
 	function init(){
 		parent::init();
-		Requirements::themedCSS("PriceListPage");
+		Requirements::themedCSS("PriceListPage", "ecommerce_complex_pricing");
 	}
 
 }
