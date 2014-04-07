@@ -1,7 +1,6 @@
-###############################################
+
 ecommerce group pricing
-Pre 0.1 proof of concept
-###############################################
+================================================================================
 
 This module is a must for e-commerce applications
 where the product prices go beyond a straight price
