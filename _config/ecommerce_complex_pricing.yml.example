@@ -1,0 +1,14 @@
+Product:
+  extensions:
+    - ComplexPriceBuyableDecorator
+ProductVariation
+  extensions:
+    - ComplexPriceBuyableDecorator
+ComplexPriceObject:
+  extensions:
+    - ComplexPriceBuyableDecorator_ComplexPriceObject
+
+ProductsAndGroupsModelAdmin:
+	managed_modules: [
+		ComplexPriceObject
+	]
