@@ -3,7 +3,7 @@
 	"type": "silverstripe-module",
 	"description": "add pricing rules to your silverstripe e-commerce (e.g. discount per group or per country)",
 	"homepage": "http://www.silverstripe-ecommerce.com",
-	"keywords": ["ecommerce", "e-commerce", "shop", "complex pricing", "silverstripe", "discounts", "pricing", "reductions", "country price", "specials", "account"],
+	"keywords": ["ecommerce", "e-commerce", "shop", "cart", "complex pricing", "silverstripe", "discounts", "pricing", "reductions", "country price", "specials", "account"],
 	"license": "Sunny Side Up (BSD-3-Clause and CUSTOM)",
 	"authors":[
 		{
