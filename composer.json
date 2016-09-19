@@ -3,12 +3,14 @@
     "type": "silverstripe-module",
     "description": "add pricing rules to your silverstripe e-commerce (e.g. discount per group or per country)",
     "keywords": [
+        "Silverstripe-CMS",
+        "CMS",
+        "Silverstripe",
         "ecommerce",
         "e-commerce",
         "shop",
         "cart",
         "complex pricing",
-        "silverstripe",
         "discounts",
         "pricing",
         "reductions",
@@ -25,7 +27,9 @@
         }
     ],
     "require": {
-        "sunnysideup/ecommerce": "dev-master"
+        "sunnysideup/ecommerce": "*",
+        "silverstripe/framework": "~3.1",
+        "silverstripe/cms": "~3.1"
     },
     "extra": {
         "installer-name": "ecommerce_complex_pricing"
